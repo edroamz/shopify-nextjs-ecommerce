@@ -1,48 +1,42 @@
 import Image from "next/image";
+import { storefront } from "@/lib/shopify";
 
-export default function Home() {
-  const staticProducts = [
-    {
-      id: 1,
-      name: "Basic Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Black",
-    },
-    {
-      id: 2,
-      name: "Basic Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-02.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Aspen White",
-    },
-    {
-      id: 3,
-      name: "Basic Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-03.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Charcoal",
-    },
-    {
-      id: 4,
-      name: "Artwork Tee",
-      href: "#",
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-04.jpg",
-      imageAlt: "Front of men's Basic Tee in black.",
-      price: "$35",
-      color: "Iso Dots",
-    },
-  ];
+export default async function HomePage() {
+  const gql = String.raw;
+
+  const productsQuery = gql`
+    query Products {
+      products(first: 40) {
+        edges {
+          node {
+            title
+            handle
+            description
+            images(first: 4) {
+              edges {
+                node {
+                  id
+                  url
+                  height
+                  width
+                  altText
+                }
+              }
+            }
+            priceRange {
+              maxVariantPrice {
+                amount
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const { data } = await storefront(productsQuery);
+
+  const products = data.products.edges;
 
   return (
     <>
@@ -51,8 +45,8 @@ export default function Home() {
           <div className="xl:px-8 overflow-hidden max-w-7xl mx-auto inset-0 absolute">
             <Image
               src="https://tailwindui.com/img/ecommerce-images/home-page-02-sale-full-width.jpg"
-              alt=""
-              className="object-top object-none w-full h-full"
+              alt="hero background"
+              className="object-top object-none"
               width={1216}
               height={896}
             />
@@ -87,45 +81,64 @@ export default function Home() {
       <section className="">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 py-32 lg:py-32 lg:max-w-7xl lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-            Customers also purchased
+            Trending products
           </h2>
 
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {staticProducts.map((product) => (
-              <div key={product.id} className="group relative">
-                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                  <Image
-                    src={product.imageSrc}
-                    alt={product.imageAlt}
-                    width={500}
-                    height={500}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                  />
-                </div>
-                <div className="mt-4 flex justify-between">
-                  <div>
-                    <h3 className="text-sm text-gray-700">
-                      <a href={product.href}>
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {product.name}
-                      </a>
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {product.color}
+            {products.map((item: any) => {
+              const product = {
+                id: item.node.handle,
+                title: item.node.title,
+                href: "#",
+
+                price: item.node.priceRange.maxVariantPrice.amount,
+                image: {
+                  src: item.node.images.edges[0].node.url,
+                  alt: item.node.images.edges[0].node.altText,
+                  width: item.node.images.edges[0].node.width,
+                  height: item.node.images.edges[0].node.height,
+                },
+              };
+
+              return (
+                <div key={product.id} className="group relative">
+                  <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+                    <Image
+                      src={product.image.src}
+                      alt={product.image.alt}
+                      width={product.image.width}
+                      height={product.image.height}
+                      className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                    />
+                  </div>
+                  <div className="mt-4 flex justify-between">
+                    <div>
+                      <h3 className="text-sm text-gray-700">
+                        <a href={product.href}>
+                          <span
+                            aria-hidden="true"
+                            className="absolute inset-0"
+                          />
+                          {product.title}
+                        </a>
+                      </h3>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      }).format(product.price)}
                     </p>
                   </div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {product.price}
-                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
       <section
         aria-labelledby="testimonial-heading"
-        className="lg:px-8 sm:px-6 pb-16 sm:pb-24 px-4 max-w-7xl mx-auto relative"
+        className="lg:px-8 sm:px-6 px-4 max-w-7xl mx-auto relative"
       >
         <div className="lg:max-w-none max-w-2xl mx-auto">
           <h2
@@ -253,7 +266,7 @@ export default function Home() {
                 cy="512"
                 r="512"
                 fill="url(#759c1415-0410-454c-8f7c-9a820de03641)"
-                fill-opacity="0.7"
+                fillOpacity="0.7"
               ></circle>
               <defs>
                 <radialGradient
@@ -264,8 +277,8 @@ export default function Home() {
                   gradientUnits="userSpaceOnUse"
                   gradientTransform="translate(512 512) rotate(90) scale(512)"
                 >
-                  <stop stop-color="#7775D6"></stop>
-                  <stop offset="1" stop-color="#E935C1" stop-opacity="0"></stop>
+                  <stop stopColor="#7775D6"></stop>
+                  <stop offset="1" stopColor="#E935C1" stopOpacity="0"></stop>
                 </radialGradient>
               </defs>
             </svg>

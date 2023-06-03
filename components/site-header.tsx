@@ -1,7 +1,7 @@
 export function SiteHeader() {
   return (
     <header>
-      <div className="flex items-center justify-between mx-auto px-4 mb-4 sm:px-6 py-10 lg:max-w-7xl lg:px-8">
+      <div className="flex items-center justify-between mx-auto px-4 sm:px-6 py-8 xl:py-10 lg:max-w-7xl lg:px-8">
         <a className="mr-6 flex items-center space-x-2" href="/">
           <svg
             viewBox="0 0 24 24"
