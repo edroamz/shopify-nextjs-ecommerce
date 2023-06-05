@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import { storefront } from "@/lib/shopify";
 
@@ -89,8 +90,7 @@ export default async function HomePage() {
               const product = {
                 id: item.node.handle,
                 title: item.node.title,
-                href: "#",
-
+                href: `/product/${item.node.handle}`,
                 price: item.node.priceRange.maxVariantPrice.amount,
                 image: {
                   src: item.node.images.edges[0].node.url,
@@ -114,13 +114,13 @@ export default async function HomePage() {
                   <div className="mt-4 flex justify-between">
                     <div>
                       <h3 className="text-sm text-gray-700">
-                        <a href={product.href}>
+                        <Link href={product.href}>
                           <span
                             aria-hidden="true"
                             className="absolute inset-0"
                           />
                           {product.title}
-                        </a>
+                        </Link>
                       </h3>
                     </div>
                     <p className="text-sm font-medium text-gray-900">

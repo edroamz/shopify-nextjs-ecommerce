@@ -1,8 +1,10 @@
+import Link from "next/link";
+
 export function SiteHeader() {
   return (
     <header>
       <div className="flex items-center justify-between mx-auto px-4 sm:px-6 py-8 xl:py-10 lg:max-w-7xl lg:px-8">
-        <a className="mr-6 flex items-center space-x-2" href="/">
+        <Link className="mr-6 flex items-center space-x-2" href="/">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -15,7 +17,7 @@ export function SiteHeader() {
             <circle cx="12" cy="12" r="10"></circle>
           </svg>
           <span className="font-bold sm:inline-block">ACME Store</span>
-        </a>
+        </Link>
         <svg
           width="20px"
           height="20px"
