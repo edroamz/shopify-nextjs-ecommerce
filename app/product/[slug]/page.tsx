@@ -3,32 +3,46 @@ import { notFound } from "next/navigation";
 
 import { storefront } from "@/lib/shopify";
 
-async function getAllProducts() {
+export async function generateStaticParams() {
   const gql = String.raw;
-
-  const productsQuery = gql`
-    query Products {
-      products(first: 40) {
+  const { data } = await storefront(gql`
+    {
+      products(first: 4) {
         edges {
           node {
-            title
             handle
-            descriptionHtml
-            images(first: 3) {
-              edges {
-                node {
-                  id
-                  url
-                  height
-                  width
-                  altText
-                }
-              }
-            }
-            priceRange {
-              maxVariantPrice {
-                amount
-              }
+          }
+        }
+      }
+    }
+  `);
+
+  return data.products.edges.map((product: any) => ({
+    slug: product.node.handle,
+  }));
+}
+
+export default async function ProductPage({ params }: any) {
+  const gql = String.raw;
+  const singleProductQuery = gql`
+    query SingleProduct($handle: String!) {
+      productByHandle(handle: $handle) {
+        title
+        descriptionHtml
+        tags
+        priceRange {
+          maxVariantPrice {
+            amount
+          }
+        }
+        images(first: 3) {
+          edges {
+            node {
+              id
+              width
+              height
+              url
+              altText
             }
           }
         }
@@ -36,42 +50,28 @@ async function getAllProducts() {
     }
   `;
 
-  const { data } = await storefront(productsQuery);
+  const { data } = await storefront(singleProductQuery, {
+    handle: params.slug,
+  });
 
-  return data.products.edges;
-}
+  const singleProduct = data.productByHandle;
 
-export async function generateStaticParams() {
-  const allProducts = await getAllProducts();
-
-  return allProducts.map((item: any) => ({
-    slug: item.node.handle,
-  }));
-}
-
-export default async function ProductPage({ params }: any) {
-  const allProducts = await getAllProducts();
-
-  const item = allProducts.find(
-    (product: any) => product.node.handle === params.slug
-  );
-
-  if (!item) {
+  if (!singleProduct) {
     notFound();
   }
 
   const product = {
-    id: item.node.handle,
-    title: item.node.title,
-    href: `/product/${item.node.handle}`,
-    descriptionHtml: item.node.descriptionHtml,
-    price: item.node.priceRange.maxVariantPrice.amount,
-    images: item.node.images.edges.map((edge: any) => ({
-      id: edge.node.id,
-      src: edge.node.url,
-      alt: edge.node.altText,
-      width: edge.node.width,
-      height: edge.node.height,
+    id: params.slug,
+    title: singleProduct.title,
+    href: `/product/${params.slug}`,
+    descriptionHtml: singleProduct.descriptionHtml,
+    price: singleProduct.priceRange.maxVariantPrice.amount,
+    images: singleProduct.images.edges.map((image: any) => ({
+      id: image.node.id,
+      src: image.node.url,
+      alt: image.node.altText,
+      width: image.node.width,
+      height: image.node.height,
     })),
   };
 

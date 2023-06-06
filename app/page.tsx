@@ -12,11 +12,9 @@ export default async function HomePage() {
           node {
             title
             handle
-            description
             images(first: 4) {
               edges {
                 node {
-                  id
                   url
                   height
                   width
