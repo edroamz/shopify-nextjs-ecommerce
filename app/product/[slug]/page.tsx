@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { Checkout } from "@/components/checkout";
+import { AddToCart } from "@/components/add-to-cart";
 
 import { storefront } from "@/lib/shopify";
 import { formatCurrency } from "@/lib/utils";
@@ -270,7 +270,7 @@ export default async function ProductPage({ params }: any) {
                 </div>
               </div>
               <div className="lg:col-span-5 mt-8">
-                <Checkout variantId={product.variantId} />
+                <AddToCart variantId={product.variantId} />
                 <div className="mt-10">
                   <h2 className="text-gray-900 font-medium text-sm">
                     Description
