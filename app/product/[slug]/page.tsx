@@ -1,10 +1,14 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import { Checkout } from "@/components/checkout";
+
 import { storefront } from "@/lib/shopify";
+import { formatCurrency } from "@/lib/utils";
+
+const gql = String.raw;
 
 export async function generateStaticParams() {
-  const gql = String.raw;
   const { data } = await storefront(gql`
     {
       products(first: 4) {
@@ -23,9 +27,8 @@ export async function generateStaticParams() {
 }
 
 export default async function ProductPage({ params }: any) {
-  const gql = String.raw;
-  const singleProductQuery = gql`
-    query SingleProduct($handle: String!) {
+  const productQuery = gql`
+    query Product($handle: String!) {
       productByHandle(handle: $handle) {
         title
         descriptionHtml
@@ -46,33 +49,42 @@ export default async function ProductPage({ params }: any) {
             }
           }
         }
+        variants(first: 1) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
       }
     }
   `;
 
-  const { data } = await storefront(singleProductQuery, {
+  const { data } = await storefront(productQuery, {
     handle: params.slug,
   });
 
-  const singleProduct = data.productByHandle;
+  const currentProduct = data.productByHandle;
 
-  if (!singleProduct) {
+  if (!currentProduct) {
     notFound();
   }
 
   const product = {
     id: params.slug,
-    title: singleProduct.title,
+    title: currentProduct.title,
     href: `/product/${params.slug}`,
-    descriptionHtml: singleProduct.descriptionHtml,
-    price: singleProduct.priceRange.maxVariantPrice.amount,
-    images: singleProduct.images.edges.map((image: any) => ({
+    descriptionHtml: currentProduct.descriptionHtml,
+    price: currentProduct.priceRange.maxVariantPrice.amount,
+    images: currentProduct.images.edges.map((image: any) => ({
       id: image.node.id,
       src: image.node.url,
       alt: image.node.altText,
       width: image.node.width,
       height: image.node.height,
     })),
+    variantId: currentProduct.variants.edges[0].node.id,
+    tags: currentProduct.tags,
   };
 
   return (
@@ -143,10 +155,7 @@ export default async function ProductPage({ params }: any) {
                     {product.title}
                   </h1>
                   <p className="text-gray-900 font-medium text-lg">
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }).format(product.price)}
+                    {formatCurrency(product.price)}
                   </p>
                 </div>
                 <div className="mt-4">
@@ -261,160 +270,7 @@ export default async function ProductPage({ params }: any) {
                 </div>
               </div>
               <div className="lg:col-span-5 mt-8">
-                {/* <form>
-                  <div>
-                    <h2 className="text-gray-900 font-medium text-sm">Color</h2>
-                    <div
-                      className="mt-2"
-                      id="headlessui-radiogroup-6"
-                      role="radiogroup"
-                      aria-labelledby="headlessui-label-1"
-                    >
-                      <label
-                        className="sr-only"
-                        id="headlessui-label-1"
-                        role="none"
-                      >
-                        Choose a color
-                      </label>
-                      <div className="items-center flex space-x-3" role="none">
-                        <div
-                          className="focus:outline-transparent focus:outline-2 focus:outline-offset-2 p-[0.125rem] rounded-full justify-center items-center cursor-pointer flex m-[-0.125rem] relative bci bbp"
-                          id="headlessui-radiogroup-option-3"
-                          role="radio"
-                          aria-checked="true"
-                          tabIndex={0}
-                          data-headlessui-state="checked"
-                          aria-labelledby="headlessui-label-2"
-                        >
-                          <span className="sr-only" id="headlessui-label-2">
-                            Black
-                          </span>
-                          <span
-                            aria-hidden="true"
-                            className="bg-gray-900 border-opacity-10 border-black border rounded-full w-8 h-8"
-                          ></span>
-                        </div>
-                        <div
-                          className="focus:outline-transparent focus:outline-2 focus:outline-offset-2 p-[0.125rem] rounded-full justify-center items-center cursor-pointer flex margin-[-0.125rem] relative bcb"
-                          id="headlessui-radiogroup-option-5"
-                          role="radio"
-                          aria-checked="false"
-                          tabIndex={-1}
-                          data-headlessui-state=""
-                          aria-labelledby="headlessui-label-4"
-                        >
-                          <span className="sr-only" id="headlessui-label-4">
-                            Heather Grey
-                          </span>
-                          <span
-                            aria-hidden="true"
-                            className="bg-gray-400 border-opacity-10 border-black border rounded-full w-8 h-8"
-                          ></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-8">
-                    <div className="justify-between items-center flex">
-                      <h2 className="text-gray-900 font-medium text-sm">
-                        Size
-                      </h2>
-                      <a href="#" className="avv avz ayc bla">
-                        See sizing chart
-                      </a>
-                    </div>
-                    <div
-                      className="mt-2"
-                      id="headlessui-radiogroup-20"
-                      role="radiogroup"
-                      aria-labelledby="headlessui-label-7"
-                    >
-                      <label
-                        className="sr-only"
-                        id="headlessui-label-7"
-                        role="none"
-                      >
-                        Choose a size
-                      </label>
-                      <div className="lw ye zj cam" role="none">
-                        <div
-                          className="xl bmu afp alj axq bic ls yu yz adp aeu aru ara avv avz awc bzn"
-                          id="headlessui-radiogroup-option-9"
-                          role="radio"
-                          aria-checked="false"
-                          tabIndex={-1}
-                          data-headlessui-state=""
-                          aria-labelledby="headlessui-label-8"
-                        >
-                          <span id="headlessui-label-8">XXS</span>
-                        </div>
-                        <div
-                          className="xl bmu afp alj axq bic ls yu yz adp aeu aru ara avv avz awc bzn"
-                          id="headlessui-radiogroup-option-11"
-                          role="radio"
-                          aria-checked="false"
-                          tabIndex={-1}
-                          data-headlessui-state=""
-                          aria-labelledby="headlessui-label-10"
-                        >
-                          <span id="headlessui-label-10">XS</span>
-                        </div>
-                        <div
-                          className="xl bmu agt ajm bac biq ls yu yz adp aeu aru ara avv avz awc bzn"
-                          id="headlessui-radiogroup-option-13"
-                          role="radio"
-                          aria-checked="true"
-                          tabIndex={0}
-                          data-headlessui-state="checked"
-                          aria-labelledby="headlessui-label-12"
-                        >
-                          <span id="headlessui-label-12">S</span>
-                        </div>
-                        <div
-                          className="xl bmu afp alj axq bic ls yu yz adp aeu aru ara avv avz awc bzn"
-                          id="headlessui-radiogroup-option-15"
-                          role="radio"
-                          aria-checked="false"
-                          tabIndex={-1}
-                          data-headlessui-state=""
-                          aria-labelledby="headlessui-label-14"
-                        >
-                          <span id="headlessui-label-14">M</span>
-                        </div>
-                        <div
-                          className="xl bmu afp alj axq bic ls yu yz adp aeu aru ara avv avz awc bzn"
-                          id="headlessui-radiogroup-option-17"
-                          role="radio"
-                          aria-checked="false"
-                          tabIndex={-1}
-                          data-headlessui-state=""
-                          aria-labelledby="headlessui-label-16"
-                        >
-                          <span id="headlessui-label-16">L</span>
-                        </div>
-                        <div
-                          className="xi bav afp alj axq bic ls yu yz adp aeu aru ara avv avz awc bzn"
-                          id="headlessui-radiogroup-option-19"
-                          role="radio"
-                          aria-checked="false"
-                          aria-disabled="true"
-                          tabIndex={-1}
-                          data-headlessui-state="disabled"
-                          aria-labelledby="headlessui-label-18"
-                        >
-                          <span id="headlessui-label-18">XL</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    type="submit"
-                    className="lh ls ti yu yz adp aeu agt ajm arh aru avt avz bac biq bmu bmz bnl bob"
-                  >
-                    Add to cart
-                  </button>
-                </form> */}
+                <Checkout variantId={product.variantId} />
                 <div className="mt-10">
                   <h2 className="text-gray-900 font-medium text-sm">
                     Description

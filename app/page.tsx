@@ -1,18 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { storefront } from "@/lib/shopify";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function HomePage() {
   const gql = String.raw;
 
   const productsQuery = gql`
     query Products {
-      products(first: 40) {
+      products(first: 12) {
         edges {
           node {
             title
             handle
-            images(first: 4) {
+            images(first: 1) {
               edges {
                 node {
                   url
@@ -122,10 +123,7 @@ export default async function HomePage() {
                       </h3>
                     </div>
                     <p className="text-sm font-medium text-gray-900">
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      }).format(product.price)}
+                      {formatCurrency(product.price)}
                     </p>
                   </div>
                 </div>
