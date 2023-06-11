@@ -4,8 +4,9 @@ import { notFound } from 'next/navigation';
 
 import { AddToCart } from 'components/product/add-to-cart';
 import { Footer } from 'components/layout/footer';
+import Price from 'components/price';
+import Prose from 'components/prose';
 import { getProduct } from 'lib/shopify';
-import { formatCurrency } from 'lib/utils';
 
 export const runtime = 'edge';
 
@@ -91,9 +92,11 @@ export default async function ProductPage({ params }: { params: { handle: string
               <div className="lg:col-span-5 lg:col-start-8">
                 <div className="flex justify-between">
                   <h1 className="text-lg font-medium text-gray-900">{product.title}</h1>
-                  <p className="text-lg font-medium text-gray-900">
-                    {formatCurrency(Number(product.priceRange.maxVariantPrice.amount))}
-                  </p>
+                  <Price
+                    className="text-lg font-medium text-gray-900"
+                    amount={product.priceRange.maxVariantPrice.amount}
+                    currencyCode={product.priceRange.maxVariantPrice.currencyCode}
+                  />
                 </div>
                 <div className="mt-4">
                   <h2 className="sr-only">Reviews</h2>
@@ -209,13 +212,15 @@ export default async function ProductPage({ params }: { params: { handle: string
                   availableForSale={product.availableForSale}
                 />
                 <div className="mt-10">
-                  <h2 className="text-sm font-medium text-gray-900">Description</h2>
-                  <div
-                    className="prose mt-4 text-sm text-gray-500"
-                    dangerouslySetInnerHTML={{
-                      __html: product.descriptionHtml
-                    }}
-                  ></div>
+                  {product.descriptionHtml ? (
+                    <>
+                      <h2 className="text-sm font-medium text-gray-900">Description</h2>
+                      <Prose
+                        className="mt-4 text-sm text-gray-500"
+                        html={product.descriptionHtml}
+                      />
+                    </>
+                  ) : null}
                 </div>
                 <section aria-labelledby="policies-heading" className="mt-10">
                   <h2 id="policies-heading" className="sr-only">

@@ -1,9 +1,8 @@
 import { Dispatch, SetStateAction } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-
 import { Dialog, DialogContent, DialogTrigger } from 'components/ui/dialog';
-import { formatCurrency } from 'lib/utils';
+import Price from 'components/price';
 import type { Cart } from 'lib/shopify/types';
 import DeleteItemButton from './delete-item-button';
 
@@ -93,12 +92,11 @@ export default function CartModal({
                             <DeleteItemButton item={item} />
                           </div>
                           <div className="row-start-3 flex items-end">
-                            <span className="text-sm">
-                              {formatCurrency(
-                                Number(item.merchandise.product.priceRange.maxVariantPrice.amount) *
-                                  item.quantity
-                              )}
-                            </span>
+                            <Price
+                              className="text-sm"
+                              amount={item.cost.totalAmount.amount}
+                              currencyCode={item.cost.totalAmount.currencyCode}
+                            />
                           </div>
                         </div>
                       </li>
@@ -120,9 +118,11 @@ export default function CartModal({
                     ({`${cart.totalQuantity} ${cart.totalQuantity > 1 ? 'items' : 'item'}`})
                   </span>
                 </span>
-                <span className="font-semibold">
-                  {formatCurrency(Number(cart.cost.subtotalAmount.amount))}
-                </span>
+                <Price
+                  className="font-semibold"
+                  amount={cart.cost.subtotalAmount.amount}
+                  currencyCode={cart.cost.subtotalAmount.currencyCode}
+                />
               </div>
               <a
                 href={cart.checkoutUrl}

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatCurrency } from 'lib/utils';
+import Price from './price';
 import { getCollectionProducts } from 'lib/shopify';
 
 export async function TrendingProducts() {
@@ -33,9 +33,11 @@ export async function TrendingProducts() {
                     </Link>
                   </h3>
                 </div>
-                <p className="text-sm font-medium text-gray-900">
-                  {formatCurrency(Number(product.priceRange.maxVariantPrice.amount))}
-                </p>
+                <Price
+                  className="text-sm font-medium text-gray-900"
+                  amount={product.priceRange.maxVariantPrice.amount}
+                  currencyCode={product.priceRange.maxVariantPrice.currencyCode}
+                />
               </div>
             </div>
           ))}

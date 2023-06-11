@@ -46,7 +46,3 @@
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
-
-.prose h2 {
-  @apply mt-8 border-t border-gray-200 pt-8 text-sm font-medium text-gray-900;
-}
