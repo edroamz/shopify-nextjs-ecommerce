@@ -1,4 +1,4 @@
-export function SiteFooter() {
+export function Footer() {
   return (
     <footer className="">
       <div className="md:flex justify-between items-center md:px-8 px-6 py-12 max-w-7xl mx-auto">

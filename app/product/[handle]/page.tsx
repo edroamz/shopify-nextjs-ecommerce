@@ -1,91 +1,51 @@
+import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { AddToCart } from "@/components/add-to-cart";
+import { AddToCart } from "components/product/add-to-cart";
+import { Footer } from "components/layout/footer";
+import { getProduct } from "lib/shopify";
+import { formatCurrency } from "lib/utils";
 
-import { storefront } from "@/lib/shopify";
-import { formatCurrency } from "@/lib/utils";
+export const runtime = "edge";
 
-const gql = String.raw;
+export async function generateMetadata({
+  params,
+}: {
+  params: { handle: string };
+}): Promise<Metadata> {
+  const product = await getProduct(params.handle);
 
-export async function generateStaticParams() {
-  const { data } = await storefront(gql`
-    {
-      products(first: 4) {
-        edges {
-          node {
-            handle
-          }
+  if (!product) return notFound();
+
+  const { url, width, height, altText: alt } = product.featuredImage || {};
+
+  return {
+    title: product.seo.title || product.title,
+    description: product.seo.description || product.description,
+    openGraph: url
+      ? {
+          images: [
+            {
+              url,
+              width,
+              height,
+              alt,
+            },
+          ],
         }
-      }
-    }
-  `);
-
-  return data.products.edges.map((product: any) => ({
-    slug: product.node.handle,
-  }));
+      : null,
+  };
 }
 
-export default async function ProductPage({ params }: any) {
-  const productQuery = gql`
-    query Product($handle: String!) {
-      productByHandle(handle: $handle) {
-        title
-        descriptionHtml
-        tags
-        priceRange {
-          maxVariantPrice {
-            amount
-          }
-        }
-        images(first: 3) {
-          edges {
-            node {
-              id
-              width
-              height
-              url
-              altText
-            }
-          }
-        }
-        variants(first: 1) {
-          edges {
-            node {
-              id
-            }
-          }
-        }
-      }
-    }
-  `;
+export default async function ProductPage({
+  params,
+}: {
+  params: { handle: string };
+}) {
+  const product = await getProduct(params.handle);
 
-  const { data } = await storefront(productQuery, {
-    handle: params.slug,
-  });
-
-  const currentProduct = data.productByHandle;
-
-  if (!currentProduct) {
-    notFound();
-  }
-
-  const product = {
-    id: params.slug,
-    title: currentProduct.title,
-    href: `/product/${params.slug}`,
-    descriptionHtml: currentProduct.descriptionHtml,
-    price: currentProduct.priceRange.maxVariantPrice.amount,
-    images: currentProduct.images.edges.map((image: any) => ({
-      id: image.node.id,
-      src: image.node.url,
-      alt: image.node.altText,
-      width: image.node.width,
-      height: image.node.height,
-    })),
-    variantId: currentProduct.variants.edges[0].node.id,
-    tags: currentProduct.tags,
-  };
+  if (!product) return notFound();
 
   return (
     <>
@@ -155,7 +115,9 @@ export default async function ProductPage({ params }: any) {
                     {product.title}
                   </h1>
                   <p className="text-gray-900 font-medium text-lg">
-                    {formatCurrency(product.price)}
+                    {formatCurrency(
+                      Number(product.priceRange.maxVariantPrice.amount)
+                    )}
                   </p>
                 </div>
                 <div className="mt-4">
@@ -251,14 +213,14 @@ export default async function ProductPage({ params }: any) {
               <div className="lg:mt-0 lg:row-start-1 lg:row-span-3 lg:col-start-1 lg:col-span-7 mt-8">
                 <h2 className="sr-only">Images</h2>
                 <div className="lg:gap-8 lg:grid-rows-3 lg:grid-cols-2 grid-cols-1 grid">
-                  {product.images.map((image: any, index: number) => {
+                  {product.images.slice(0, 3).map((image, i) => {
                     return (
                       <Image
-                        key={image.id}
-                        src={image.src}
-                        alt={image.alt}
+                        key={`${image.url}${i}`}
+                        src={image.url}
+                        alt={image.altText}
                         className={
-                          index === 0
+                          i === 0
                             ? "lg:row-span-2 lg:col-span-2 rounded-lg"
                             : "lg:block rounded-lg hidden"
                         }
@@ -270,7 +232,10 @@ export default async function ProductPage({ params }: any) {
                 </div>
               </div>
               <div className="lg:col-span-5 mt-8">
-                <AddToCart variantId={product.variantId} />
+                <AddToCart
+                  variants={product.variants}
+                  availableForSale={product.availableForSale}
+                />
                 <div className="mt-10">
                   <h2 className="text-gray-900 font-medium text-sm">
                     Description
@@ -344,6 +309,7 @@ export default async function ProductPage({ params }: any) {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

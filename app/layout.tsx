@@ -1,26 +1,35 @@
-import "./globals.css";
+import Navbar from "components/layout/navbar";
+import { ReactNode, Suspense } from "react";
 import { Inter } from "next/font/google";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const { SITE_NAME } = process.env;
 
 export const metadata = {
-  title: "ACME Store",
-  description: "Ecommerce site built with Next.js and Shopify",
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
 };
 
-export default function RootLayout({
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
+    <html lang="en" className={inter.variable}>
+      <body>
+        <Navbar />
+        <Suspense>
+          <main>{children}</main>
+        </Suspense>
       </body>
     </html>
   );
