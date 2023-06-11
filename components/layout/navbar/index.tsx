@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { Suspense } from "react";
-import Cart from "components/cart";
+import Link from 'next/link';
+import { Suspense } from 'react';
+import Cart from 'components/cart';
 
 function CartIcon() {
   return (
@@ -27,7 +27,7 @@ function CartIcon() {
 export default async function Navbar() {
   return (
     <header>
-      <div className="flex items-center justify-between mx-auto px-4 sm:px-6 py-8 xl:py-10 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto flex items-center justify-between px-4 py-8 sm:px-6 lg:max-w-7xl lg:px-8 xl:py-10">
         <Link className="mr-6 flex items-center space-x-2" href="/">
           <svg
             viewBox="0 0 24 24"

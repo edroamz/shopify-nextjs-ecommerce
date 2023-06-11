@@ -1,7 +1,7 @@
-import { useRouter } from "next/navigation";
-import { startTransition, useState } from "react";
-import type { CartItem } from "lib/shopify/types";
-import { cn } from "lib/utils";
+import { useRouter } from 'next/navigation';
+import { startTransition, useState } from 'react';
+import type { CartItem } from 'lib/shopify/types';
+import { cn } from 'lib/utils';
 
 export default function DeleteItemButton({ item }: { item: CartItem }) {
   const router = useRouter();
@@ -11,10 +11,10 @@ export default function DeleteItemButton({ item }: { item: CartItem }) {
     setRemoving(true);
 
     const response = await fetch(`/api/cart`, {
-      method: "DELETE",
+      method: 'DELETE',
       body: JSON.stringify({
-        lineId: item.id,
-      }),
+        lineId: item.id
+      })
     });
 
     const data = await response.json();
@@ -35,11 +35,11 @@ export default function DeleteItemButton({ item }: { item: CartItem }) {
       aria-label="Remove cart item"
       onClick={handleRemove}
       disabled={removing}
-      className={cn({ "cursor-not-allowed px-0": removing })}
+      className={cn({ 'cursor-not-allowed px-0': removing })}
     >
       {removing ? (
         <svg
-          className="animate-spin -ml-1 h-[18px] w-[18px]"
+          className="-ml-1 h-[18px] w-[18px] animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"

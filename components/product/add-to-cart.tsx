@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { cn } from "lib/utils";
-import { ProductVariant } from "lib/shopify/types";
+import { cn } from 'lib/utils';
+import { ProductVariant } from 'lib/shopify/types';
 
 export function AddToCart({
   variants,
-  availableForSale,
+  availableForSale
 }: {
   variants: ProductVariant[];
   availableForSale: boolean;
 }) {
-  const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id);
+  const [selectedVariantId] = useState(variants[0]?.id);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [adding, setAdding] = useState(false);
@@ -26,10 +26,10 @@ export function AddToCart({
     setAdding(true);
 
     const response = await fetch(`/api/cart`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
-        merchandiseId: selectedVariantId,
-      }),
+        merchandiseId: selectedVariantId
+      })
     });
 
     const data = await response.json();
@@ -52,16 +52,16 @@ export function AddToCart({
       disabled={isMutating}
       onClick={handleAdd}
       className={cn(
-        "focus:ring-offset-2 focus:ring-2 focus:ring-gray-800 focus:outline-none hover:bg-gray-700 text-white font-medium text-base py-3 px-8 bg-gray-900 border-transparent border rounded-md justify-center items-center w-full flex mt-8",
+        'mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-gray-900 px-8 py-3 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2',
         {
-          "cursor-not-allowed opacity-60": !availableForSale,
-          "cursor-not-allowed": isMutating,
+          'cursor-not-allowed opacity-60': !availableForSale,
+          'cursor-not-allowed': isMutating
         }
       )}
     >
       {isMutating ? (
         <svg
-          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+          className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -81,7 +81,7 @@ export function AddToCart({
           ></path>
         </svg>
       ) : null}
-      <span>{availableForSale ? "Add To Cart" : "Out Of Stock"}</span>
+      <span>{availableForSale ? 'Add To Cart' : 'Out Of Stock'}</span>
     </button>
   );
 }

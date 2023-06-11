@@ -1,16 +1,16 @@
-import { Metadata } from "next";
-import Image from "next/image";
-import { notFound } from "next/navigation";
+import { Metadata } from 'next';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
 
-import { AddToCart } from "components/product/add-to-cart";
-import { Footer } from "components/layout/footer";
-import { getProduct } from "lib/shopify";
-import { formatCurrency } from "lib/utils";
+import { AddToCart } from 'components/product/add-to-cart';
+import { Footer } from 'components/layout/footer';
+import { getProduct } from 'lib/shopify';
+import { formatCurrency } from 'lib/utils';
 
-export const runtime = "edge";
+export const runtime = 'edge';
 
 export async function generateMetadata({
-  params,
+  params
 }: {
   params: { handle: string };
 }): Promise<Metadata> {
@@ -30,19 +30,15 @@ export async function generateMetadata({
               url,
               width,
               height,
-              alt,
-            },
-          ],
+              alt
+            }
+          ]
         }
-      : null,
+      : null
   };
 }
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { handle: string };
-}) {
+export default async function ProductPage({ params }: { params: { handle: string } }) {
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -50,25 +46,15 @@ export default async function ProductPage({
   return (
     <>
       <div className="bg-white">
-        <div className="sm:pb-24 pt-6 pb-16">
-          <nav
-            aria-label="Breadcrumb"
-            className="lg:px-8 sm:px-6 px-4 max-w-7xl mx-auto"
-          >
-            <ol role="list" className="items-center flex space-x-4">
+        <div className="pb-16 pt-6 sm:pb-24">
+          <nav aria-label="Breadcrumb" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <ol role="list" className="flex items-center space-x-4">
               <li>
-                <div className="items-center flex">
-                  <a
-                    href="#"
-                    className="text-gray-900 font-medium text-sm mr-4"
-                  >
+                <div className="flex items-center">
+                  <a href="#" className="mr-4 text-sm font-medium text-gray-900">
                     Women
                   </a>
-                  <svg
-                    viewBox="0 0 6 20"
-                    aria-hidden="true"
-                    className="text-gray-300 w-auto h-5"
-                  >
+                  <svg viewBox="0 0 6 20" aria-hidden="true" className="h-5 w-auto text-gray-300">
                     <path
                       d="M4.878 4.34H3.551L.27 16.532h1.327l3.281-12.19z"
                       fill="currentColor"
@@ -77,18 +63,11 @@ export default async function ProductPage({
                 </div>
               </li>
               <li>
-                <div className="items-center flex">
-                  <a
-                    href="#"
-                    className="text-gray-900 font-medium text-sm mr-4"
-                  >
+                <div className="flex items-center">
+                  <a href="#" className="mr-4 text-sm font-medium text-gray-900">
                     Clothing
                   </a>
-                  <svg
-                    viewBox="0 0 6 20"
-                    aria-hidden="true"
-                    className="text-gray-300 w-auto h-5"
-                  >
+                  <svg viewBox="0 0 6 20" aria-hidden="true" className="h-5 w-auto text-gray-300">
                     <path
                       d="M4.878 4.34H3.551L.27 16.532h1.327l3.281-12.19z"
                       fill="currentColor"
@@ -100,39 +79,35 @@ export default async function ProductPage({
                 <a
                   href="#"
                   aria-current="page"
-                  className="text-gray-500 font-medium hover:text-gray-600"
+                  className="font-medium text-gray-500 hover:text-gray-600"
                 >
                   Basic Tee
                 </a>
               </li>
             </ol>
           </nav>
-          <div className="lg:px-8 lg:max-w-7xl sm:px-6 px-4 max-w-2xl mt-8 mx-auto">
-            <div className="lg:gap-x-8 lg:grid-cols-12 lg:auto-cols-min lg:grid">
-              <div className="lg:col-start-8 lg:col-span-5">
+          <div className="mx-auto mt-8 max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+            <div className="lg:grid lg:auto-cols-min lg:grid-cols-12 lg:gap-x-8">
+              <div className="lg:col-span-5 lg:col-start-8">
                 <div className="flex justify-between">
-                  <h1 className="text-gray-900 font-medium text-lg">
-                    {product.title}
-                  </h1>
-                  <p className="text-gray-900 font-medium text-lg">
-                    {formatCurrency(
-                      Number(product.priceRange.maxVariantPrice.amount)
-                    )}
+                  <h1 className="text-lg font-medium text-gray-900">{product.title}</h1>
+                  <p className="text-lg font-medium text-gray-900">
+                    {formatCurrency(Number(product.priceRange.maxVariantPrice.amount))}
                   </p>
                 </div>
                 <div className="mt-4">
                   <h2 className="sr-only">Reviews</h2>
-                  <div className="items-center flex">
-                    <p className="text-gray-700 text-sm">
+                  <div className="flex items-center">
+                    <p className="text-sm text-gray-700">
                       3.9<span className="sr-only"> out of 5 stars</span>
                     </p>
-                    <div className="items-center flex ml-1">
+                    <div className="ml-1 flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         aria-hidden="true"
-                        className="shrink-0 w-5 h-5 text-yellow-400"
+                        className="h-5 w-5 shrink-0 text-yellow-400"
                       >
                         <path
                           fillRule="evenodd"
@@ -145,7 +120,7 @@ export default async function ProductPage({
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         aria-hidden="true"
-                        className="shrink-0 w-5 h-5 text-yellow-400"
+                        className="h-5 w-5 shrink-0 text-yellow-400"
                       >
                         <path
                           fillRule="evenodd"
@@ -158,7 +133,7 @@ export default async function ProductPage({
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         aria-hidden="true"
-                        className="shrink-0 w-5 h-5 text-yellow-400"
+                        className="h-5 w-5 shrink-0 text-yellow-400"
                       >
                         <path
                           fillRule="evenodd"
@@ -171,7 +146,7 @@ export default async function ProductPage({
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         aria-hidden="true"
-                        className="shrink-0 w-5 h-5 text-yellow-400"
+                        className="h-5 w-5 shrink-0 text-yellow-400"
                       >
                         <path
                           fillRule="evenodd"
@@ -184,7 +159,7 @@ export default async function ProductPage({
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         aria-hidden="true"
-                        className="shrink-0 w-5 h-5 text-gray-200"
+                        className="h-5 w-5 shrink-0 text-gray-200"
                       >
                         <path
                           fillRule="evenodd"
@@ -193,16 +168,13 @@ export default async function ProductPage({
                         ></path>
                       </svg>
                     </div>
-                    <div
-                      aria-hidden="true"
-                      className="text-gray-300 text-sm ml-4"
-                    >
+                    <div aria-hidden="true" className="ml-4 text-sm text-gray-300">
                       ·
                     </div>
-                    <div className="flex ml-4">
+                    <div className="ml-4 flex">
                       <a
                         href="#"
-                        className="text-indigo-600 font-medium text-sm hover:text-indigo-500"
+                        className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                       >
                         See all 512 reviews
                       </a>
@@ -210,9 +182,9 @@ export default async function ProductPage({
                   </div>
                 </div>
               </div>
-              <div className="lg:mt-0 lg:row-start-1 lg:row-span-3 lg:col-start-1 lg:col-span-7 mt-8">
+              <div className="mt-8 lg:col-span-7 lg:col-start-1 lg:row-span-3 lg:row-start-1 lg:mt-0">
                 <h2 className="sr-only">Images</h2>
-                <div className="lg:gap-8 lg:grid-rows-3 lg:grid-cols-2 grid-cols-1 grid">
+                <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 lg:gap-8">
                   {product.images.slice(0, 3).map((image, i) => {
                     return (
                       <Image
@@ -221,8 +193,8 @@ export default async function ProductPage({
                         alt={image.altText}
                         className={
                           i === 0
-                            ? "lg:row-span-2 lg:col-span-2 rounded-lg"
-                            : "lg:block rounded-lg hidden"
+                            ? 'rounded-lg lg:col-span-2 lg:row-span-2'
+                            : 'hidden rounded-lg lg:block'
                         }
                         width={image.width}
                         height={image.height}
@@ -231,19 +203,17 @@ export default async function ProductPage({
                   })}
                 </div>
               </div>
-              <div className="lg:col-span-5 mt-8">
+              <div className="mt-8 lg:col-span-5">
                 <AddToCart
                   variants={product.variants}
                   availableForSale={product.availableForSale}
                 />
                 <div className="mt-10">
-                  <h2 className="text-gray-900 font-medium text-sm">
-                    Description
-                  </h2>
+                  <h2 className="text-sm font-medium text-gray-900">Description</h2>
                   <div
-                    className="text-gray-500 mt-4 text-sm prose"
+                    className="prose mt-4 text-sm text-gray-500"
                     dangerouslySetInnerHTML={{
-                      __html: product.descriptionHtml,
+                      __html: product.descriptionHtml
                     }}
                   ></div>
                 </div>
@@ -251,8 +221,8 @@ export default async function ProductPage({
                   <h2 id="policies-heading" className="sr-only">
                     Our Policies
                   </h2>
-                  <dl className="xl:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 gap-6 grid-cols-1 grid">
-                    <div className="text-center p-6 bg-gray-50 border-gray-200 border rounded-lg">
+                  <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                       <dt>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +231,7 @@ export default async function ProductPage({
                           strokeWidth="1.5"
                           stroke="currentColor"
                           aria-hidden="true"
-                          className="text-gray-400 shrink-0 w-6 h-6 mx-auto"
+                          className="mx-auto h-6 w-6 shrink-0 text-gray-400"
                         >
                           <path
                             strokeLinecap="round"
@@ -269,15 +239,13 @@ export default async function ProductPage({
                             d="M6.115 5.19l.319 1.913A6 6 0 008.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 002.288-4.042 1.087 1.087 0 00-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 01-.98-.314l-.295-.295a1.125 1.125 0 010-1.591l.13-.132a1.125 1.125 0 011.3-.21l.603.302a.809.809 0 001.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 001.528-1.732l.146-.292M6.115 5.19A9 9 0 1017.18 4.64M6.115 5.19A8.965 8.965 0 0112 3c1.929 0 3.716.607 5.18 1.64"
                           ></path>
                         </svg>
-                        <span className="text-gray-900 font-medium text-sm mt-4">
+                        <span className="mt-4 text-sm font-medium text-gray-900">
                           International delivery
                         </span>
                       </dt>
-                      <dd className="text-gray-500 text-sm mt-1">
-                        Get your order in 2 days
-                      </dd>
+                      <dd className="mt-1 text-sm text-gray-500">Get your order in 2 days</dd>
                     </div>
-                    <div className="text-center p-6 bg-gray-50 border-gray-200 border rounded-lg">
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                       <dt>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -286,7 +254,7 @@ export default async function ProductPage({
                           strokeWidth="1.5"
                           stroke="currentColor"
                           aria-hidden="true"
-                          className="text-gray-400 shrink-0 w-6 h-6 mx-auto"
+                          className="mx-auto h-6 w-6 shrink-0 text-gray-400"
                         >
                           <path
                             strokeLinecap="round"
@@ -294,13 +262,11 @@ export default async function ProductPage({
                             d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           ></path>
                         </svg>
-                        <span className="text-gray-900 font-medium text-sm mt-4">
+                        <span className="mt-4 text-sm font-medium text-gray-900">
                           Loyalty rewards
                         </span>
                       </dt>
-                      <dd className="text-gray-500 text-sm mt-1">
-                        Free shipping on all orders
-                      </dd>
+                      <dd className="mt-1 text-sm text-gray-500">Free shipping on all orders</dd>
                     </div>
                   </dl>
                 </section>

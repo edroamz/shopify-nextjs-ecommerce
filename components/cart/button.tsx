@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { useCookies } from "react-cookie";
-import type { Cart } from "lib/shopify/types";
-import CartModal from "./modal";
+import { useEffect, useRef, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import type { Cart } from 'lib/shopify/types';
+import CartModal from './modal';
 
 export default function CartButton({
   cart,
-  cartIdUpdated,
+  cartIdUpdated
 }: {
   cart: Cart;
   cartIdUpdated: boolean;
 }) {
-  const [, setCookie] = useCookies(["cartId"]);
+  const [, setCookie] = useCookies(['cartId']);
   const [cartIsOpen, setCartIsOpen] = useState(false);
   const quantityRef = useRef(cart.totalQuantity);
 
@@ -20,10 +20,10 @@ export default function CartButton({
   // on the server-side (yet).
   useEffect(() => {
     if (cartIdUpdated) {
-      setCookie("cartId", cart.id, {
-        path: "/",
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
+      setCookie('cartId', cart.id, {
+        path: '/',
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production'
       });
     }
     return;
@@ -42,7 +42,5 @@ export default function CartButton({
     }
   }, [cartIsOpen, cart.totalQuantity, quantityRef]);
 
-  return (
-    <CartModal isOpen={cartIsOpen} setIsOpen={setCartIsOpen} cart={cart} />
-  );
+  return <CartModal isOpen={cartIsOpen} setIsOpen={setCartIsOpen} cart={cart} />;
 }

@@ -1,23 +1,21 @@
-import Image from "next/image";
-import Link from "next/link";
-import { formatCurrency } from "lib/utils";
-import { getCollectionProducts } from "lib/shopify";
+import Image from 'next/image';
+import Link from 'next/link';
+import { formatCurrency } from 'lib/utils';
+import { getCollectionProducts } from 'lib/shopify';
 
 export async function TrendingProducts() {
-  const products = await getCollectionProducts({ collection: "frontpage" });
+  const products = await getCollectionProducts({ collection: 'frontpage' });
 
   if (!products?.length) return null;
 
   return (
-    <section className="">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-32 lg:py-32 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          Trending products
-        </h2>
+    <section>
+      <div className="mx-auto max-w-2xl px-4 py-32 sm:px-6 lg:max-w-7xl lg:px-8 lg:py-32">
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900">Trending products</h2>
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {products.map((product) => (
             <div key={product.id} className="group relative">
-              <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+              <div className="aspect-h-1 aspect-w-1 lg:aspect-none w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-80">
                 <Image
                   src={product.featuredImage.url}
                   alt={product.featuredImage.altText}
@@ -36,9 +34,7 @@ export async function TrendingProducts() {
                   </h3>
                 </div>
                 <p className="text-sm font-medium text-gray-900">
-                  {formatCurrency(
-                    Number(product.priceRange.maxVariantPrice.amount)
-                  )}
+                  {formatCurrency(Number(product.priceRange.maxVariantPrice.amount))}
                 </p>
               </div>
             </div>

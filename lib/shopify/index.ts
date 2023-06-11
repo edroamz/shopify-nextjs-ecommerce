@@ -1,9 +1,5 @@
-import {
-  HIDDEN_PRODUCT_TAG,
-  SHOPIFY_GRAPHQL_API_ENDPOINT,
-  TAGS,
-} from "lib/constants";
-import { isShopifyError } from "lib/type-guards";
+import { HIDDEN_PRODUCT_TAG, SHOPIFY_GRAPHQL_API_ENDPOINT, TAGS } from 'lib/constants';
+import { isShopifyError } from 'lib/type-guards';
 import {
   Cart,
   Connection,
@@ -17,32 +13,30 @@ import {
   ShopifyProductOperation,
   ShopifyProductsOperation,
   ShopifyRemoveFromCartOperation,
-  ShopifyUpdateCartOperation,
-} from "./types";
-import { getCollectionProductsQuery } from "./queries/collection";
+  ShopifyUpdateCartOperation
+} from './types';
+import { getCollectionProductsQuery } from './queries/collection';
 import {
   addToCartMutation,
   createCartMutation,
   editCartItemsMutation,
-  removeFromCartMutation,
-} from "./mutations/cart";
-import { getCartQuery } from "./queries/cart";
-import { getProductQuery, getProductsQuery } from "./queries/product";
+  removeFromCartMutation
+} from './mutations/cart';
+import { getCartQuery } from './queries/cart';
+import { getProductQuery, getProductsQuery } from './queries/product';
 
 const domain = `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!}`;
 const endpoint = `${domain}${SHOPIFY_GRAPHQL_API_ENDPOINT}`;
 const key = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
 
-type ExtractVariables<T> = T extends { variables: object }
-  ? T["variables"]
-  : never;
+type ExtractVariables<T> = T extends { variables: object } ? T['variables'] : never;
 
 export async function shopifyFetch<T>({
-  cache = "force-cache",
+  cache = 'force-cache',
   headers,
   query,
   tags,
-  variables,
+  variables
 }: {
   cache?: RequestCache;
   headers?: HeadersInit;
@@ -52,18 +46,18 @@ export async function shopifyFetch<T>({
 }): Promise<{ status: number; body: T } | never> {
   try {
     const result = await fetch(endpoint, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": key,
-        ...headers,
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': key,
+        ...headers
       },
       body: JSON.stringify({
         ...(query && { query }),
-        ...(variables && { variables }),
+        ...(variables && { variables })
       }),
       cache,
-      ...(tags && { next: { tags } }),
+      ...(tags && { next: { tags } })
     });
 
     const body = await result.json();
@@ -74,20 +68,20 @@ export async function shopifyFetch<T>({
 
     return {
       status: result.status,
-      body,
+      body
     };
   } catch (e) {
     if (isShopifyError(e)) {
       throw {
         status: e.status || 500,
         message: e.message,
-        query,
+        query
       };
     }
 
     throw {
       error: e,
-      query,
+      query
     };
   }
 }
@@ -99,25 +93,19 @@ const removeEdgesAndNodes = (array: Connection<any>) => {
 const reshapeCart = (cart: ShopifyCart): Cart => {
   if (!cart.cost?.totalTaxAmount) {
     cart.cost.totalTaxAmount = {
-      amount: "0.0",
-      currencyCode: "USD",
+      amount: '0.0',
+      currencyCode: 'USD'
     };
   }
 
   return {
     ...cart,
-    lines: removeEdgesAndNodes(cart.lines),
+    lines: removeEdgesAndNodes(cart.lines)
   };
 };
 
-const reshapeProduct = (
-  product: ShopifyProduct,
-  filterHiddenProducts: boolean = true
-) => {
-  if (
-    !product ||
-    (filterHiddenProducts && product.tags.includes(HIDDEN_PRODUCT_TAG))
-  ) {
+const reshapeProduct = (product: ShopifyProduct, filterHiddenProducts: boolean = true) => {
+  if (!product || (filterHiddenProducts && product.tags.includes(HIDDEN_PRODUCT_TAG))) {
     return undefined;
   }
 
@@ -126,7 +114,7 @@ const reshapeProduct = (
   return {
     ...rest,
     images: removeEdgesAndNodes(images),
-    variants: removeEdgesAndNodes(variants),
+    variants: removeEdgesAndNodes(variants)
   };
 };
 
@@ -149,7 +137,7 @@ const reshapeProducts = (products: ShopifyProduct[]) => {
 export async function createCart(): Promise<Cart> {
   const res = await shopifyFetch<ShopifyCreateCartOperation>({
     query: createCartMutation,
-    cache: "no-store",
+    cache: 'no-store'
   });
 
   return reshapeCart(res.body.data.cartCreate.cart);
@@ -163,24 +151,21 @@ export async function addToCart(
     query: addToCartMutation,
     variables: {
       cartId,
-      lines,
+      lines
     },
-    cache: "no-store",
+    cache: 'no-store'
   });
   return reshapeCart(res.body.data.cartLinesAdd.cart);
 }
 
-export async function removeFromCart(
-  cartId: string,
-  lineIds: string[]
-): Promise<Cart> {
+export async function removeFromCart(cartId: string, lineIds: string[]): Promise<Cart> {
   const res = await shopifyFetch<ShopifyRemoveFromCartOperation>({
     query: removeFromCartMutation,
     variables: {
       cartId,
-      lineIds,
+      lineIds
     },
-    cache: "no-store",
+    cache: 'no-store'
   });
 
   return reshapeCart(res.body.data.cartLinesRemove.cart);
@@ -194,9 +179,9 @@ export async function updateCart(
     query: editCartItemsMutation,
     variables: {
       cartId,
-      lines,
+      lines
     },
-    cache: "no-store",
+    cache: 'no-store'
   });
 
   return reshapeCart(res.body.data.cartLinesUpdate.cart);
@@ -206,7 +191,7 @@ export async function getCart(cartId: string): Promise<Cart | null> {
   const res = await shopifyFetch<ShopifyCartOperation>({
     query: getCartQuery,
     variables: { cartId },
-    cache: "no-store",
+    cache: 'no-store'
   });
 
   if (!res.body.data.cart) {
@@ -219,7 +204,7 @@ export async function getCart(cartId: string): Promise<Cart | null> {
 export async function getCollectionProducts({
   collection,
   reverse,
-  sortKey,
+  sortKey
 }: {
   collection: string;
   reverse?: boolean;
@@ -231,8 +216,8 @@ export async function getCollectionProducts({
     variables: {
       handle: collection,
       reverse,
-      sortKey,
-    },
+      sortKey
+    }
   });
 
   if (!res.body.data.collection) {
@@ -240,9 +225,7 @@ export async function getCollectionProducts({
     return [];
   }
 
-  return reshapeProducts(
-    removeEdgesAndNodes(res.body.data.collection.products)
-  );
+  return reshapeProducts(removeEdgesAndNodes(res.body.data.collection.products));
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
@@ -250,8 +233,8 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
     query: getProductQuery,
     tags: [TAGS.products],
     variables: {
-      handle,
-    },
+      handle
+    }
   });
 
   return reshapeProduct(res.body.data.product, false);
@@ -260,7 +243,7 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
 export async function getProducts({
   query,
   reverse,
-  sortKey,
+  sortKey
 }: {
   query?: string;
   reverse?: boolean;
@@ -272,26 +255,23 @@ export async function getProducts({
     variables: {
       query,
       reverse,
-      sortKey,
-    },
+      sortKey
+    }
   });
 
   return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
 }
 
 export async function storefront(query: any, variables = {}) {
-  const response = await fetch(
-    process.env.NEXT_PUBLIC_SHOPIFY_API_URL as string,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": process.env
-          .NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN as string,
-      },
-      body: JSON.stringify({ query, variables }),
-    }
-  );
+  const response = await fetch(process.env.NEXT_PUBLIC_SHOPIFY_API_URL as string, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Storefront-Access-Token': process.env
+        .NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN as string
+    },
+    body: JSON.stringify({ query, variables })
+  });
 
   return response.json();
 }

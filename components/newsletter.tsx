@@ -1,13 +1,13 @@
 export function Newsletter() {
   return (
-    <section className="sm:py-24 py-16">
-      <div className="lg:px-8 sm:px-6 max-w-7xl mx-auto">
-        <div className="xl:py-32 xl:items-center xl:flex-row sm:px-24 sm:rounded-3xl py-24 px-6 bg-gray-900 overflow-hidden gap-10 flex flex-col isolate relative">
-          <h2 className="xl:flex-auto xl:max-w-none sm:text-4xl text-white tracking-tight font-bold text-3xl max-w-2xl ">
+    <section className="py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="relative isolate flex flex-col gap-10 overflow-hidden bg-gray-900 px-6 py-24 sm:rounded-3xl sm:px-24 xl:flex-row xl:items-center xl:py-32">
+          <h2 className="max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl xl:max-w-none xl:flex-auto ">
             Get notified when we’re launching.
           </h2>
-          <form className="max-w-md w-full">
-            <div className="gap-x-4 flex">
+          <form className="w-full max-w-md">
+            <div className="flex gap-x-4">
               <label htmlFor="email-address" className="sr-only">
                 Email address
               </label>
@@ -17,19 +17,19 @@ export function Newsletter() {
                 type="email"
                 autoComplete="email"
                 required
-                className="sm:leading-6 sm:text-sm text-white py-2 px-[0.875rem] bg-white/5 border-0 rounded-md flex-auto min-w-0 ring-inset ring-1 ring-white/[0.1] focus:ring-2 focus:ring-inset focus:ring-white focus:outline-none placeholder:text-gray-500"
+                className="min-w-0 flex-auto rounded-md border-0 bg-white/5 px-[0.875rem] py-2 text-white ring-1 ring-inset ring-white/[0.1] placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm sm:leading-6"
                 placeholder="Enter your email"
               />
               <button
                 type="submit"
-                className="text-gray-900 font-semibold text-sm py-[0.625rem] px-[0.875rem] bg-white hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-md flex-none focus:outline-none"
+                className="flex-none rounded-md bg-white px-[0.875rem] py-[0.625rem] text-sm font-semibold text-gray-900 hover:bg-gray-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Notify me
               </button>
             </div>
-            <p className="text-gray-300 leading-6 text-sm mt-4">
-              We care about your data. Read our{" "}
-              <a href="#" className="text-white font-semibold">
+            <p className="mt-4 text-sm leading-6 text-gray-300">
+              We care about your data. Read our{' '}
+              <a href="#" className="font-semibold text-white">
                 privacy&nbsp;policy
               </a>
               .
@@ -37,7 +37,7 @@ export function Newsletter() {
           </form>
           <svg
             viewBox="0 0 1024 1024"
-            className="w-[64rem] h-[64rem] -z-10 top-1/2 left-1/2 absolute"
+            className="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem]"
             aria-hidden="true"
           >
             <circle

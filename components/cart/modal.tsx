@@ -1,16 +1,16 @@
-import { Dispatch, SetStateAction } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { Dispatch, SetStateAction } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import { Dialog, DialogContent, DialogTrigger } from "components/ui/dialog";
-import { formatCurrency } from "lib/utils";
-import type { Cart } from "lib/shopify/types";
-import DeleteItemButton from "./delete-item-button";
+import { Dialog, DialogContent, DialogTrigger } from 'components/ui/dialog';
+import { formatCurrency } from 'lib/utils';
+import type { Cart } from 'lib/shopify/types';
+import DeleteItemButton from './delete-item-button';
 
 export default function CartModal({
   isOpen,
   setIsOpen,
-  cart,
+  cart
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -45,38 +45,31 @@ export default function CartModal({
           ></path>
         </svg>
         {cart.totalQuantity > 0 && (
-          <div className="text-xs font-bold absolute top-[-10px] left-[-15px] bg-black px-1 text-white rounded-full">
+          <div className="absolute left-[-15px] top-[-10px] rounded-full bg-black px-1 text-xs font-bold text-white">
             {cart.totalQuantity}
           </div>
         )}
       </DialogTrigger>
       <DialogContent className="right-0 top-0 h-screen max-w-lg rounded-none p-0">
-        <div className="flex flex-col overflow-x-hidden h-full border-none inset-0 items-start justify-between">
-          <div className="pt-14 sticky top-0 h-auto"></div>
-          <div className="flex flex-auto overflow-x-hidden overflow-y-auto w-full">
+        <div className="inset-0 flex h-full flex-col items-start justify-between overflow-x-hidden border-none">
+          <div className="sticky top-0 h-auto pt-14"></div>
+          <div className="flex w-full flex-auto overflow-y-auto overflow-x-hidden">
             <div className="w-full">
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 px-6">
-                Your cart
-              </h2>
+              <h2 className="px-6 text-2xl font-bold tracking-tight text-gray-900">Your cart</h2>
               {cart.lines.length === 0 ? (
                 <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden p-6">
-                  <p className="mt-6 text-center text-2xl font-bold">
-                    Your cart is empty.
-                  </p>
+                  <p className="mt-6 text-center text-2xl font-bold">Your cart is empty.</p>
                 </div>
               ) : null}
               {cart.lines.length !== 0 ? (
                 <ul className="mt-5 space-y-5 pb-10">
                   {cart.lines.map((item) => {
                     return (
-                      <li
-                        key={item.id}
-                        className="grid-cols-12 auto-cols-min grid px-6"
-                      >
+                      <li key={item.id} className="grid auto-cols-min grid-cols-12 px-6">
                         <Link
                           href={`/product/${item.merchandise.product.handle}`}
                           onClick={() => setIsOpen(false)}
-                          className="mt-0 row-start-1 row-span-3 col-start-1 col-span-2"
+                          className="col-span-2 col-start-1 row-span-3 row-start-1 mt-0"
                         >
                           <Image
                             src={item.merchandise.product.featuredImage.url}
@@ -84,18 +77,16 @@ export default function CartModal({
                               item.merchandise.product.featuredImage.altText ||
                               item.merchandise.product.title
                             }
-                            height={
-                              item.merchandise.product.featuredImage.height
-                            }
+                            height={item.merchandise.product.featuredImage.height}
                             width={item.merchandise.product.featuredImage.width}
                           />
                         </Link>
-                        <div className="grid col-start-3 pl-6 row-span-3 col-span-10">
-                          <div className="flex flex-row justify-between items-start gap-x-6 row-start-1">
+                        <div className="col-span-10 col-start-3 row-span-3 grid pl-6">
+                          <div className="row-start-1 flex flex-row items-start justify-between gap-x-6">
                             <Link
                               href={`/product/${item.merchandise.product.handle}`}
                               onClick={() => setIsOpen(false)}
-                              className="text-sm font-medium w-full"
+                              className="w-full text-sm font-medium"
                             >
                               {item.merchandise.product.title}
                             </Link>
@@ -104,10 +95,8 @@ export default function CartModal({
                           <div className="row-start-3 flex items-end">
                             <span className="text-sm">
                               {formatCurrency(
-                                Number(
-                                  item.merchandise.product.priceRange
-                                    .maxVariantPrice.amount
-                                ) * item.quantity
+                                Number(item.merchandise.product.priceRange.maxVariantPrice.amount) *
+                                  item.quantity
                               )}
                             </span>
                           </div>
@@ -121,18 +110,14 @@ export default function CartModal({
           </div>
           {cart.lines.length !== 0 ? (
             <div
-              style={{ boxShadow: "0 -6px 18px -8px rgba(0,0,0,.25)" }}
-              className="sticky bottom-0 h-auto flex-shrink-0 w-full p-6"
+              style={{ boxShadow: '0 -6px 18px -8px rgba(0,0,0,.25)' }}
+              className="sticky bottom-0 h-auto w-full flex-shrink-0 p-6"
             >
               <div className="flex flex-row items-center justify-between">
                 <span className="font-semibold">
-                  Subtotal{" "}
-                  <span className="font-normal text-sm">
-                    (
-                    {`${cart.totalQuantity} ${
-                      cart.totalQuantity > 1 ? "items" : "item"
-                    }`}
-                    )
+                  Subtotal{' '}
+                  <span className="text-sm font-normal">
+                    ({`${cart.totalQuantity} ${cart.totalQuantity > 1 ? 'items' : 'item'}`})
                   </span>
                 </span>
                 <span className="font-semibold">
@@ -141,7 +126,7 @@ export default function CartModal({
               </div>
               <a
                 href={cart.checkoutUrl}
-                className="block text-center my-6 w-full bg-black text-white py-3 px-4 rounded-md"
+                className="my-6 block w-full rounded-md bg-black px-4 py-3 text-center text-white"
               >
                 Continue to Checkout
               </a>
